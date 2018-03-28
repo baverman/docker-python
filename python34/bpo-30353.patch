@@ -1,0 +1,53 @@
+https://github.com/python/cpython/commit/9ba3aa4d02a110d1a1ea464a8aff3be7dd9c63c3.patch
+
+From 9ba3aa4d02a110d1a1ea464a8aff3be7dd9c63c3 Mon Sep 17 00:00:00 2001
+From: Erik Bray <erik.m.bray@gmail.com>
+Date: Wed, 7 Jun 2017 18:42:24 +0100
+Subject: [PATCH] bpo-30353: Fix pass by value for structs on 64-bit
+ Cygwin/MinGW (GH-1559)
+
+---
+ Modules/_ctypes/callproc.c           | 23 +++++++++++++++++++++--
+ 4 files changed, 65 insertions(+), 2 deletions(-)
+
+diff --git a/Modules/_ctypes/callproc.c b/Modules/_ctypes/callproc.c
+index 0b6faf96c68..5439b939dc4 100644
+--- a/Modules/_ctypes/callproc.c
++++ b/Modules/_ctypes/callproc.c
+@@ -1039,6 +1039,13 @@ GetComError(HRESULT errcode, GUID *riid, IUnknown *pIunk)
+ }
+ #endif
+ 
++#if (defined(__x86_64__) && (defined(__MINGW64__) || defined(__CYGWIN__))) || \
++    defined(__aarch64__)
++#define CTYPES_PASS_BY_REF_HACK
++#define POW2(x) (((x & ~(x - 1)) == x) ? x : 0)
++#define IS_PASS_BY_REF(x) (x > 8 || !POW2(x))
++#endif
++
+ /*
+  * Requirements, must be ensured by the caller:
+  * - argtuple is tuple of arguments
+@@ -1136,8 +1143,20 @@ PyObject *_ctypes_callproc(PPROC pProc,
+     }
+     for (i = 0; i < argcount; ++i) {
+         atypes[i] = args[i].ffi_type;
+-        if (atypes[i]->type == FFI_TYPE_STRUCT
+-            )
++#ifdef CTYPES_PASS_BY_REF_HACK
++        size_t size = atypes[i]->size;
++        if (IS_PASS_BY_REF(size)) {
++            void *tmp = alloca(size);
++            if (atypes[i]->type == FFI_TYPE_STRUCT)
++                memcpy(tmp, args[i].value.p, size);
++            else
++                memcpy(tmp, (void*)&args[i].value, size);
++
++            avalues[i] = tmp;
++        }
++        else
++#endif
++        if (atypes[i]->type == FFI_TYPE_STRUCT)
+             avalues[i] = (void *)args[i].value.p;
+         else
+             avalues[i] = (void *)&args[i].value;

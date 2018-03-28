@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>unchecked-ioctl.patch\python2\main - aports - Main aports tree
+</title>
+<meta name='generator' content='cgit v1.1'/>
+<meta name='robots' content='index, nofollow'/>
+<link rel='stylesheet' type='text/css' href='/cgit.css'/>
+<link rel='shortcut icon' href='//alpinelinux.org/alpine-logo.ico'/>
+<link rel='alternate' title='Atom feed' href='https://git.alpinelinux.org/cgit/aports/atom/main/python2/unchecked-ioctl.patch?h=master' type='application/atom+xml'/>
+<link rel='vcs-git' href='git://git.alpinelinux.org/aports' title='aports Git repository'/>
+<link rel='vcs-git' href='https://git.alpinelinux.org/cgit/aports' title='aports Git repository'/>
+</head>
+<body>
+<div id='cgit'><table id='header'>
+<tr>
+<td class='logo' rowspan='2'><a href='/cgit/'><img src='//wiki.alpinelinux.org/w/resources/assets/alogo.png' alt='cgit logo'/></a></td>
+<td class='main'><a href='/cgit/'>index</a> : <a title='aports' href='/cgit/aports/'>aports</a></td><td class='form'><form method='get'>
+<select name='h' onchange='this.form.submit();'>
+<option value='1.10-stable'>1.10-stable</option>
+<option value='1.9'>1.9</option>
+<option value='2.0-stable'>2.0-stable</option>
+<option value='2.1-stable'>2.1-stable</option>
+<option value='2.2-stable'>2.2-stable</option>
+<option value='2.3-stable'>2.3-stable</option>
+<option value='2.4-stable'>2.4-stable</option>
+<option value='2.5-stable'>2.5-stable</option>
+<option value='2.6-stable'>2.6-stable</option>
+<option value='2.7-stable'>2.7-stable</option>
+<option value='3.0-stable'>3.0-stable</option>
+<option value='3.1-stable'>3.1-stable</option>
+<option value='3.2-stable'>3.2-stable</option>
+<option value='3.3-stable'>3.3-stable</option>
+<option value='3.4-stable'>3.4-stable</option>
+<option value='3.5-stable'>3.5-stable</option>
+<option value='3.6-stable'>3.6-stable</option>
+<option value='3.7-stable'>3.7-stable</option>
+<option value='master' selected='selected'>master</option>
+</select> <input type='submit' value='switch'/></form></td></tr>
+<tr><td class='sub'>Main aports tree
+</td><td class='sub right'>gitolite</td></tr></table>
+<table class='tabs'><tr><td>
+<a href='/cgit/aports/about/'>about</a><a href='/cgit/aports/'>summary</a><a href='/cgit/aports/refs/'>refs</a><a href='/cgit/aports/log/main/python2/unchecked-ioctl.patch'>log</a><a class='active' href='/cgit/aports/tree/main/python2/unchecked-ioctl.patch'>tree</a><a href='/cgit/aports/commit/main/python2/unchecked-ioctl.patch'>commit</a><a href='/cgit/aports/diff/main/python2/unchecked-ioctl.patch'>diff</a><a href='/cgit/aports/stats/main/python2/unchecked-ioctl.patch'>stats</a></td><td class='form'><form class='right' method='get' action='/cgit/aports/log/main/python2/unchecked-ioctl.patch'>
+<select name='qt'>
+<option value='grep'>log msg</option>
+<option value='author'>author</option>
+<option value='committer'>committer</option>
+<option value='range'>range</option>
+</select>
+<input class='txt' type='text' size='10' name='q' value=''/>
+<input type='submit' value='search'/>
+</form>
+</td></tr></table>
+<div class='path'>path: <a href='/cgit/aports/tree/'>root</a>/<a href='/cgit/aports/tree/main'>main</a>/<a href='/cgit/aports/tree/main/python2'>python2</a>/<a href='/cgit/aports/tree/main/python2/unchecked-ioctl.patch'>unchecked-ioctl.patch</a></div><div class='content'>blob: 4d5564c2cb8e598882b4620a2ee019ffc0504435 (<a href='/cgit/aports/plain/main/python2/unchecked-ioctl.patch'>plain</a>)
+<table summary='blob content' class='blob'>
+<tr><td class='linenumbers'><pre><a id='n1' href='#n1'>1</a>
+<a id='n2' href='#n2'>2</a>
+<a id='n3' href='#n3'>3</a>
+<a id='n4' href='#n4'>4</a>
+<a id='n5' href='#n5'>5</a>
+<a id='n6' href='#n6'>6</a>
+<a id='n7' href='#n7'>7</a>
+<a id='n8' href='#n8'>8</a>
+<a id='n9' href='#n9'>9</a>
+<a id='n10' href='#n10'>10</a>
+<a id='n11' href='#n11'>11</a>
+</pre></td>
+<td class='lines'><pre><code><span style="color:#0057ae">--- ./Modules/fcntlmodule.c.orig</span>
+<span style="color:#000000; font-weight:bold">+++ ./Modules/fcntlmodule.c</span>
+<span style="color:#010181">&#64;&#64; -118,7 +118,7 &#64;&#64;</span>
+     int mutate_arg = 1;
+     char buf[IOCTL_BUFSZ+1];  /* argument plus NUL byte */
+ 
+<span style="color:#0057ae">-    if (PyArg_ParseTuple(args, &quot;O&amp;Iw#|i:ioctl&quot;,</span>
+<span style="color:#000000; font-weight:bold">+    if (PyArg_ParseTuple(args, &quot;O&amp;Iw#|n:ioctl&quot;,</span>
+                          conv_descriptor, &amp;fd, &amp;code,
+                          &amp;str, &amp;len, &amp;mutate_arg)) {
+         char *arg;
+</code></pre></td></tr></table>
+</div> <!-- class=content -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-2804446-12");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</div> <!-- id=cgit -->
+</body>
+</html>
