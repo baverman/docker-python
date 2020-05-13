@@ -1,16 +1,15 @@
-FROM alpine:3.7 as base
-RUN apk --no-cache add expat libffi
-
+FROM alpine:3.11 as base
+RUN apk --no-cache add expat libffi readline libbz2 xz-libs gdbm sqlite-libs libstdc++
 
 FROM base as deps
-
 RUN apk --no-cache add \
-        ca-certificates build-base libffi-dev libressl-dev \
+        ca-certificates build-base libffi-dev openssl-dev \
         linux-headers pcre-dev file zlib-dev sqlite-dev expat-dev bzip2-dev \
         xz-dev ncurses-dev gdbm-dev readline-dev
 
-ARG SRC=https://www.python.org/ftp/python/3.4.8/Python-3.4.8.tgz
-ARG SRC_MD5=28777863616060065112cfb73ee7bbb5
+ARG SRC
+ARG SRC_MD5
+ARG PYLIB
 
 ENV CFLAGS="-Os -fomit-frame-pointer" \
     CXXFLAGS="-Os -fomit-frame-pointer" \
@@ -18,6 +17,7 @@ ENV CFLAGS="-Os -fomit-frame-pointer" \
     LDFLAGS="-Wl,--as-needed"
 
 RUN wget $SRC -O source.tgz \
+  && md5sum source.tgz \
   && echo "$SRC_MD5  source.tgz" | md5sum -c \
   && tar xf source.tgz
 
@@ -26,12 +26,10 @@ COPY /*.patch /patches/
 RUN cd Python* \
   && patch -p1 < /patches/musl-find_library.patch \
   && patch -p1 < /patches/fix-xattrs-glibc.patch \
-  && patch -p1 < /patches/bpo-30353.patch \
-  && patch -p1 < /patches/libressl.patch \
-  && rm -r Modules/expat \
+  && ( rm -r Modules/expat \
            Modules/zlib \
            Modules/_ctypes/darwin* \
-           Modules/_ctypes/libffi* \
+           Modules/_ctypes/libffi* || true ) \
   && ./configure --prefix=/usr \
                  --enable-ipv6 \
                  --enable-loadable-sqlite-extensions \
@@ -42,13 +40,14 @@ RUN cd Python* \
                  --with-system-expat \
                  --with-system-ffi \
                  --with-threads \
-  && make -j2 EXTRA_CFLAGS="$CFLAGS -DTHREAD_STACK_SIZE=0x100000"
+  && make -j4 EXTRA_CFLAGS="$CFLAGS -DTHREAD_STACK_SIZE=0x100000"
 
 RUN cd Python* \
-  && make -j1 DESTDIR=/python EXTRA_CFLAGS="$CFLAGS" install \
+  && make -j4 DESTDIR=/python EXTRA_CFLAGS="$CFLAGS" install \
   && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so \
   && ln -s /usr/bin/python3 /python/usr/bin/python \
-  && ln -s /usr/bin/pip3 /python/usr/bin/pip
+  && ln -s /usr/bin/pip3 /python/usr/bin/pip \
+  && echo "manylinux1_compatible = True" > /python/usr/lib/$PYLIB/_manylinux.py
 
 RUN rm -rf /python/usr/lib/python*/test \
            /python/usr/lib/python*/idlelib \
@@ -61,8 +60,7 @@ RUN rm -rf /python/usr/lib/python*/test \
            /python/usr/lib/python*/lib2to3/tests \
            /python/usr/lib/python*/sqlite3/test \
            /python/usr/lib/python*/turtledemo \
-           /python/usr/lib/python*/config-*m-x86_64-linux-gnu \
-           /python/usr/lib/python*/config-*m/libpython*m.a \
+           /python/usr/lib/python*/config-*/libpython*.a \
            /python/usr/bin/idle*
 
 

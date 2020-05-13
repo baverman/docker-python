@@ -1,0 +1,5 @@
+export SRC=http://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz
+export SRC_MD5=5a58675043bde569d235f41dadeada42
+export PYLIB=python3.5
+OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB"
+CONTEXT=python3

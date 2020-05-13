@@ -1,0 +1,5 @@
+export SRC=http://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
+export SRC_MD5=d348d978a5387512fbc7d7d52dd3a5ef
+export PYLIB=python3.7
+OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB"
+CONTEXT=python3

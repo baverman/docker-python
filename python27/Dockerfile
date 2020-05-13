@@ -1,16 +1,16 @@
-FROM alpine:3.7 as base
-RUN apk --no-cache add expat libffi
+FROM alpine:3.11 as base
+RUN apk --no-cache add expat libffi readline libbz2 xz-libs gdbm sqlite-libs libstdc++
 
 
 FROM base as deps
 
 RUN apk --no-cache add \
-        ca-certificates build-base libffi-dev libressl-dev \
+        ca-certificates build-base libffi-dev openssl-dev \
         linux-headers pcre-dev file zlib-dev sqlite-dev expat-dev bzip2-dev \
         xz-dev ncurses-dev gdbm-dev readline-dev
 
-ARG SRC=https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz
-ARG SRC_MD5=cee2e4b33ad3750da77b2e85f2f8b724
+ARG SRC=http://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
+ARG SRC_MD5=38c84292658ed4456157195f1c9bcbe1
 
 ENV CFLAGS="-Os -fomit-frame-pointer" \
     CXXFLAGS="-Os -fomit-frame-pointer" \
@@ -18,6 +18,7 @@ ENV CFLAGS="-Os -fomit-frame-pointer" \
     LDFLAGS="-Wl,--as-needed"
 
 RUN wget $SRC -O source.tgz \
+  && md5sum source.tgz \
   && echo "$SRC_MD5  source.tgz" | md5sum -c \
   && tar xf source.tgz
 
@@ -40,11 +41,12 @@ RUN cd Python* \
                  --with-system-zlib \
                  --with-ensurepip=install \
                  --with-threads \
-  && make -j2
+  && make -j4
 
 RUN cd Python* \
-  && make -j1 DESTDIR=/python install \
-  && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so
+  && make -j4 DESTDIR=/python install \
+  && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so \
+  && echo "manylinux1_compatible = True" > /python/usr/lib/python2.7/_manylinux.py
 
 RUN rm -rf /python/usr/lib/python*/test \
            /python/usr/lib/python*/idlelib \
