@@ -1,9 +1,13 @@
-FROM alpine:3.11 as base
-RUN apk --no-cache add expat libffi readline libbz2 xz-libs gdbm sqlite-libs libstdc++
+ARG _INSTALL_BASE_IMAGE=alpine:3.11
+
+FROM ${_INSTALL_BASE_IMAGE} as base
+ARG _INSTALL_SSL_LIBS="libssl1.1 libcrypto1.1"
+RUN env
+RUN apk --no-cache add expat libffi readline libbz2 xz-libs gdbm sqlite-libs libstdc++ ${_INSTALL_SSL_LIBS}
 
 FROM base as deps
 RUN apk --no-cache add \
-        ca-certificates build-base libffi-dev openssl-dev \
+        ca-certificates build-base libffi-dev openssl openssl-dev \
         linux-headers pcre-dev file zlib-dev sqlite-dev expat-dev bzip2-dev \
         xz-dev ncurses-dev gdbm-dev readline-dev
 
@@ -48,6 +52,7 @@ RUN cd Python* \
   && ln -s /usr/bin/python3 /python/usr/bin/python \
   && ln -s /usr/bin/pip3 /python/usr/bin/pip \
   && echo "manylinux1_compatible = True" > /python/usr/lib/$PYLIB/_manylinux.py
+
 
 RUN rm -rf /python/usr/lib/python*/test \
            /python/usr/lib/python*/idlelib \

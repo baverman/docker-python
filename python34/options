@@ -1,5 +1,8 @@
 export SRC=http://www.python.org/ftp/python/3.4.10/Python-3.4.10.tgz
 export SRC_MD5=2452f4d809ae9d88011ccafe12c4b6d3
 export PYLIB=python3.4
-OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB"
+export _INSTALL_SSL_LIBS='libssl1.0 libcrypto1.0'
+export _INSTALL_BASE_IMAGE=alpine:3.8
+OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB --build-arg=_INSTALL_BASE_IMAGE --build-arg=_INSTALL_SSL_LIBS"
 CONTEXT=python3
+TAG=3.4.10

@@ -3,3 +3,4 @@ export SRC_MD5=f9f3768f757e34b342dbc06b41cbc844
 export PYLIB=python3.8
 OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB"
 CONTEXT=python3
+TAG=3.8.2

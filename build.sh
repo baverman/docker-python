@@ -11,6 +11,10 @@ fi
 test -f $ver/options && source $ver/options
 
 docker build --network=host $proxy_opts $OPTS -t $name ${CONTEXT:-$ver}
+docker run --rm $name python -c 'import ssl, sqlite3, zlib'
+docker run --rm $name pip freeze
+
+test -n "$TAG" && docker tag $name "$name:$TAG"
 
 if [ -n "$PUSH" ]; then
     docker push $name
