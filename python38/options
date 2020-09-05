@@ -1,6 +1,6 @@
-export SRC=http://www.python.org/ftp/python/3.8.2/Python-3.8.2.tgz
-export SRC_MD5=f9f3768f757e34b342dbc06b41cbc844
+export SRC=http://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz
+export SRC_MD5=e2f52bcf531c8cc94732c0b6ff933ff0
 export PYLIB=python3.8
 OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB"
 CONTEXT=python3
-TAG=3.8.2
+TAG=3.8.5

@@ -1,0 +1,7 @@
+export SRC=http://www.python.org/ftp/python/3.9.0/Python-3.9.0rc1.tgz
+export SRC_MD5=f98d8ac7c8b2bf3fd887d989dbb0f2b8
+export PYLIB=python3.9
+export ATTR_PATCH=fix-xattrs-glibc-3.9.patch
+OPTS="--build-arg=SRC --build-arg=SRC_MD5 --build-arg=PYLIB --build-arg=ATTR_PATCH"
+CONTEXT=python3
+TAG=3.9.0rc1

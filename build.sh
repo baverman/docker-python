@@ -17,5 +17,9 @@ docker run --rm $name pip freeze
 test -n "$TAG" && docker tag $name "$name:$TAG"
 
 if [ -n "$PUSH" ]; then
-    docker push $name
+    docker push $name:$TAG
+fi
+
+if [ "$PUSH" == "latest" ]; then
+    docker push $name:latest
 fi

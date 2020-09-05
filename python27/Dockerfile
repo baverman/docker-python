@@ -45,8 +45,7 @@ RUN cd Python* \
 
 RUN cd Python* \
   && make -j4 DESTDIR=/python install \
-  && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so \
-  && echo "manylinux1_compatible = True" > /python/usr/lib/python2.7/_manylinux.py
+  && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so
 
 RUN rm -rf /python/usr/lib/python*/test \
            /python/usr/lib/python*/idlelib \

@@ -33,8 +33,7 @@ RUN cd Python* \
   && make -j1 DESTDIR=/python altinstall
 
 RUN strip --strip-all /python/usr/lib/python*/lib-dynload/*.so \
-  && ln -s /usr/bin/python2.6 /python/usr/bin/python \
-  && echo "manylinux1_compatible = True" > /python/usr/lib/python2.6/_manylinux.py
+  && ln -s /usr/bin/python2.6 /python/usr/bin/python
 
 COPY *.whl *.zip *.tar.gz /
 

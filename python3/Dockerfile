@@ -1,4 +1,4 @@
-ARG _INSTALL_BASE_IMAGE=alpine:3.11
+ARG _INSTALL_BASE_IMAGE=alpine:3.12
 
 FROM ${_INSTALL_BASE_IMAGE} as base
 ARG _INSTALL_SSL_LIBS="libssl1.1 libcrypto1.1"
@@ -14,6 +14,7 @@ RUN apk --no-cache add \
 ARG SRC
 ARG SRC_MD5
 ARG PYLIB
+ARG ATTR_PATCH=fix-xattrs-glibc.patch
 
 ENV CFLAGS="-Os -fomit-frame-pointer" \
     CXXFLAGS="-Os -fomit-frame-pointer" \
@@ -29,7 +30,7 @@ COPY /*.patch /patches/
 
 RUN cd Python* \
   && patch -p1 < /patches/musl-find_library.patch \
-  && patch -p1 < /patches/fix-xattrs-glibc.patch \
+  && patch -p1 < /patches/$ATTR_PATCH \
   && ( rm -r Modules/expat \
            Modules/zlib \
            Modules/_ctypes/darwin* \
@@ -50,8 +51,7 @@ RUN cd Python* \
   && make -j4 DESTDIR=/python EXTRA_CFLAGS="$CFLAGS" install \
   && strip --strip-all /python/usr/lib/python*/lib-dynload/*.so \
   && ln -s /usr/bin/python3 /python/usr/bin/python \
-  && ln -s /usr/bin/pip3 /python/usr/bin/pip \
-  && echo "manylinux1_compatible = True" > /python/usr/lib/$PYLIB/_manylinux.py
+  && ln -s /usr/bin/pip3 /python/usr/bin/pip
 
 
 RUN rm -rf /python/usr/lib/python*/test \
